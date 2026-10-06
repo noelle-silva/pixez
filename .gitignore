@@ -30,6 +30,11 @@
 .pub/
 /build/
 **/build/
+
+# 平台接入构建产物
+/dist-app/
+/.tmp/
+
 **/*.g.dart
 **/*.freezed.dart
 /lib/generated/

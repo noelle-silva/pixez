@@ -1,0 +1,19 @@
+{
+  "type": "desktop-app",
+  "id": "pixez-flutter",
+  "name": "PixEz",
+  "description": "Pixiv 第三方客户端（PixEz）",
+  "versionSource": "release.json",
+  "package": {
+    "windowsExecutable": "pixez.exe",
+    "icon": "assets/images/icon.png"
+  },
+  "displayMode": "default",
+  "commands": [],
+  "reservedNameExemptions": [
+    {
+      "name": "data",
+      "reason": "Flutter Windows 运行资源目录（icudtl.dat、flutter_assets 等），随程序打包，非应用数据目录"
+    }
+  ]
+}
