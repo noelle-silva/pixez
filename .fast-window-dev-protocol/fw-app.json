@@ -8,6 +8,7 @@
     "windowsExecutable": "pixez.exe",
     "icon": "assets/images/icon.png"
   },
+  "displayMode": "default",
   "commands": [],
   "reservedNameExemptions": [
     {
