@@ -52,8 +52,36 @@ function spawnCmd(command, args, opts = {}) {
   })
 }
 
+
+function resolveNugetExeDir(currentPath) {
+  if (process.platform !== 'win32') return ''
+  const dirs = String(currentPath || '').split(';').map(s => s.trim()).filter(Boolean)
+  for (const dir of dirs) {
+    if (fs.existsSync(path.join(dir, 'nuget.exe'))) return ''
+  }
+  for (const dir of dirs) {
+    const cmdPath = path.join(dir, 'nuget.cmd')
+    if (!fs.existsSync(cmdPath)) continue
+    try {
+      const text = fs.readFileSync(cmdPath, 'utf8')
+      const m = text.match(/"([^"]+\\nuget\.exe)"/i) || text.match(/rem\s+target:\s*(.+nuget\.exe)/i)
+      if (m && fs.existsSync(m[1].trim())) {
+        return path.dirname(m[1].trim())
+      }
+    } catch {
+      // ignore
+    }
+  }
+  return ''
+}
+
 function flutterEnv(depsStore, buildDir) {
   const env = { ...process.env }
+  const nugetDir = resolveNugetExeDir(env.PATH || env.Path)
+  if (nugetDir) {
+    const key = Object.keys(env).find(k => k.toLowerCase() === 'path') || 'PATH'
+    env[key] = `${nugetDir};${env[key] || ''}`
+  }
   env.PUB_CACHE = path.join(depsStore, 'pub')
   env.GIT_CONFIG_COUNT = '1'
   env.GIT_CONFIG_KEY_0 = 'core.longpaths'
@@ -74,6 +102,8 @@ const GENERATED_TRACKED_FILES = [
   'windows/flutter/generated_plugin_registrant.cc',
   'windows/flutter/generated_plugin_registrant.h',
   'windows/flutter/generated_plugins.cmake',
+  'ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
+  'macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
 ]
 
 function snapshotGeneratedFiles(worktree) {
@@ -110,7 +140,7 @@ async function withShortWorktreePath(worktree, fn) {
     const candidate = `${letter}:`
     if (fs.existsSync(`${candidate}\\`)) continue
     try {
-      execFileSync('subst', [candidate, worktree], { stdio: 'ignore' })
+      execFileSync('subst', [candidate, path.dirname(worktree)], { stdio: 'ignore' })
       drive = candidate
       break
     } catch {
@@ -121,7 +151,7 @@ async function withShortWorktreePath(worktree, fn) {
     return await fn(worktree)
   }
   try {
-    return await fn(`${drive}\\`)
+    return await fn(path.join(`${drive}\\`, path.basename(worktree)))
   } finally {
     try {
       execFileSync('subst', [drive, '/D'], { stdio: 'ignore' })

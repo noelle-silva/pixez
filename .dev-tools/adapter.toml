@@ -89,6 +89,14 @@ reason = "内嵌 Dart 插件锁文件"
 path = "android/app/src/main/java"
 reason = "Flutter pub get 自动生成 Android 插件注册目录"
 
+[[exceptions]]
+path = "lib/src"
+reason = "Flutter build_runner 自动生成代码目录"
+
+[[exceptions]]
+path = "plugins/rhttp/rhttp/lib/src/rust/api/*.freezed.dart"
+reason = "rhttp build_runner 自动生成的 freezed 文件"
+
 [quick-build.env]
 PUB_CACHE = "${EUCLI_CF_DEPS_STORE}/pub"
 CARGO_HOME = "${EUCLI_CF_DEPS_STORE}/cargo"
