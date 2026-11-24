@@ -192,6 +192,7 @@ async function cmdBuild() {
   const depsStore = requireEnv('EUCLI_CF_DEPS_STORE')
   const stageDir = path.join(buildDir, 'stage')
   await fsp.mkdir(buildDir, { recursive: true })
+  await fsp.rm(stageDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
   const env = flutterEnv(depsStore, buildDir)
   const snap = snapshotGeneratedFiles(worktree)
   try {
