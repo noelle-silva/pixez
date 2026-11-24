@@ -104,6 +104,7 @@ const GENERATED_TRACKED_FILES = [
   'windows/flutter/generated_plugins.cmake',
   'ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
   'macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
+  'lib/page/history/history_store.freezed.dart',
 ]
 
 function snapshotGeneratedFiles(worktree) {
